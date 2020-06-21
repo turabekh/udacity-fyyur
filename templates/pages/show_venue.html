@@ -4,10 +4,10 @@
 <div class="row">
 	<div class="col-sm-6">
 		<h1 class="monospace">
-			{{ venue.name }}
+			{{ venue.name }} <button id="delete-venue" data-id="{{venue.id}}" onclick="deleteVenue(event)" class="btn btn-small btn-danger">Delete Venue</button>
 		</h1>
 		<p class="subtitle">
-			ID: {{ venue.id }}
+			ID: {{ venue.id }}<a style="margin-left: 40px;" href="{{url_for('edit_venue', venue_id=venue.id) }}" class="mx-5 btn btn-small btn-warning">Edit Venue</a>
 		</p>
 		<div class="genres">
 			{% for genre in venue.genres %}
@@ -54,7 +54,7 @@
 			<div class="tile tile-show">
 				<img src="{{ show.artist_image_link }}" alt="Show Artist Image" />
 				<h5><a href="/artists/{{ show.artist_id }}">{{ show.artist_name }}</a></h5>
-				<h6>{{ show.start_time|datetime('full') }}</h6>
+				<h6>{{ show.start_time.strftime('%A %B, %d, %I at %p') }}</h6>
 			</div>
 		</div>
 		{% endfor %}
@@ -68,12 +68,30 @@
 			<div class="tile tile-show">
 				<img src="{{ show.artist_image_link }}" alt="Show Artist Image" />
 				<h5><a href="/artists/{{ show.artist_id }}">{{ show.artist_name }}</a></h5>
-				<h6>{{ show.start_time|datetime('full') }}</h6>
+				<h6>{{ show.start_time.strftime('%A %B, %d, %I at %p')}}</h6>
 			</div>
 		</div>
 		{% endfor %}
 	</div>
 </section>
-
+<script>
+	function deleteVenue(e) {
+		var id = e.target.dataset["id"]
+		fetch("/venues/" + id, {
+			method: "DELETE",
+			headers: {
+				"Content-type": "application/json"
+			}
+		})
+		.then(response => response.json())
+		.then((data) => {
+			if (data["success"] === true)
+			{
+				window.location.href = "{{url_for('index') }}";
+			}
+		})
+		.catch(er => console.log("Error Happendd"))
+	}
+</script>
 {% endblock %}
 

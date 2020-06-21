@@ -1,21 +1,22 @@
 from datetime import datetime
 from flask_wtf import Form
-from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField
-from wtforms.validators import DataRequired, AnyOf, URL
+from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
+from wtforms.fields.html5 import DateTimeLocalField, TelField
+from wtforms.validators import DataRequired, AnyOf, URL, ValidationError
 from helper import GENRES, STATES
+from app import Artist, Venue
+import phonenumbers
 
 class ShowForm(Form):
-    artist_id = StringField(
-        'artist_id'
+    artist_id = SelectField(
+        'artist_id', validators=[DataRequired()],
+        choices= [(art.id, art.name) for art in Artist.query.all()]
     )
-    venue_id = StringField(
-        'venue_id'
+    venue_id =SelectField(
+        'venue_id', validators=[DataRequired()],
+        choices= [(ven.id, ven.name) for ven in Venue.query.all()]
     )
-    start_time = DateTimeField(
-        'start_time',
-        validators=[DataRequired()],
-        default= datetime.today()
-    )
+    start_time = DateTimeLocalField('start_time', validators=[DataRequired()], default= datetime.today())
 
 class VenueForm(Form):
     name = StringField(
@@ -31,20 +32,30 @@ class VenueForm(Form):
     address = StringField(
         'address', validators=[DataRequired()]
     )
-    phone = StringField(
-        'phone'
-    )
+    phone = TelField()
     image_link = StringField(
         'image_link'
     )
     genres = SelectMultipleField(
-        # TODO implement enum restriction
         'genres', validators=[DataRequired()],
         choices = GENRES
     )
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
     )
+    seeking_talent = BooleanField("Seeking Talent")
+    seeking_description = StringField(
+        'Seeking Description'
+    )
+    website = StringField("Website")
+
+    def validate_phone(self, phone):
+        try:
+            p = phonenumbers.parse(phone.data)
+            if not phonenumbers.is_valid_number(p):
+                raise ValueError()
+        except (phonenumbers.phonenumberutil.NumberParseException, ValueError):
+            raise ValidationError('Invalid phone number')
 
 class ArtistForm(Form):
     name = StringField(
@@ -57,21 +68,27 @@ class ArtistForm(Form):
         'state', validators=[DataRequired()],
         choices = STATES
     )
-    phone = StringField(
-        # TODO implement validation logic for state
-        'phone'
-    )
+    phone = TelField()
     image_link = StringField(
         'image_link'
     )
     genres = SelectMultipleField(
-        # TODO implement enum restriction
         'genres', validators=[DataRequired()],
         choices = GENRES
     )
     facebook_link = StringField(
-        # TODO implement enum restriction
         'facebook_link', validators=[URL()]
     )
+    seeking_venue = BooleanField("Seeking Talent")
+    seeking_description = StringField(
+        'Seeking Description'
+    )
+    website = StringField("Website")
 
-# TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
+    def validate_phone(self, phone):
+        try:
+            p = phonenumbers.parse(phone.data)
+            if not phonenumbers.is_valid_number(p):
+                raise ValueError()
+        except (phonenumbers.phonenumberutil.NumberParseException, ValueError):
+            raise ValidationError('Invalid phone number')

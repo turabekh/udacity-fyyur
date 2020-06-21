@@ -21,7 +21,7 @@
       </div>
       <div class="form-group">
           <label for="phone">Phone</label>
-          {{ form.phone(class_ = 'form-control', placeholder='xxx-xxx-xxxx', autofocus = true) }}
+          {{ form.phone(pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}', class_ = 'form-control', placeholder='xxx-xxx-xxxx', autofocus = true) }}
         </div>
       <div class="form-group">
         <label for="genres">Genres</label>
@@ -29,8 +29,24 @@
         {{ form.genres(class_ = 'form-control', placeholder='Genres, separated by commas', autofocus = true) }}
       </div>
       <div class="form-group">
+        <label for="">Image Link</label>
+        {{ form.image_link(class_ = 'form-control', placeholder='http://',autofocus = true) }}
+      </div>
+      <div class="form-group">
           <label for="">Facebook Link</label>
           {{ form.facebook_link(class_ = 'form-control', placeholder='http://', autofocus = true) }}
+        </div>
+        <div class="form-group">
+          <label for="">Website</label>
+          {{ form.website(class_ = 'form-control', placeholder='http://',autofocus = true) }}
+        </div>
+        <div class="form-group form-check">
+          <label for="" class="form-check-input">Seeking Talent</label>
+          {{ form.seeking_venue(class_ = 'form-check-input', placeholder='http://',autofocus = true) }}
+        </div>
+        <div class="form-group">
+          <label for="">Seeking Description</label>
+          {{ form.seeking_description(class_ = 'form-control', placeholder='',autofocus = true) }}
         </div>
       <input type="submit" value="Create Venue" class="btn btn-primary btn-lg btn-block">
     </form>
